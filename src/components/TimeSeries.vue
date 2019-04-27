@@ -27,6 +27,8 @@ export default {
     return {
       charts: [],
       series: [],
+      dataToEmitTemplate: [],
+      dataToEmit: [],
       firtsPkg: true,
       channels: []
     };
@@ -35,15 +37,20 @@ export default {
     eeg(dataStr) {
       let data = JSON.parse(dataStr);
       if (this.firtsPkg) {
+        console.log(data);
         this.channels = data.channels;
         this.firtsPkg = false;
-        console.log(data);
         this.initGraph();
       }
       this.series.forEach((serie, idx) => {
-        serie.append(Date.now(), data.eeg[0][idx]);
+        serie.append(Date.now(), data.eeg[idx]);
+        this.dataToEmit[idx].push(data.eeg[idx]);
       });
       this.$emit("frequency", data.fs);
+      if (this.dataToEmit[0].length === data.fs) {
+        this.$emit("dataForOneSec", this.dataToEmit);
+        this.dataToEmit = this.dataToEmit.map(_data => [])
+      }
     }
   },
   methods: {
@@ -75,9 +82,13 @@ export default {
           strokeStyle: COLORS[idx]
         });
 
+        // createDataToEmitTemplate
+        this.dataToEmitTemplate.push([])
+
         // render chart
         this.charts[idx].streamTo(canvas);
       });
+      this.dataToEmit = [...this.dataToEmitTemplate]
     }
   }
 };

@@ -1,10 +1,10 @@
 export function getChartSmoothieDefaults () {
     return Object.assign({
-        millisPerPixel: 5,
+        millisPerPixel: 10,
         responsive: true,
         // millisPerLine: 1,
         grid: {
-            fillStyle: '#454545',
+            fillStyle: '#555',
             strokeStyle: 'rgba(0,0,0,0.1)',
             sharpLines: false,
             // verticalSections: 8,

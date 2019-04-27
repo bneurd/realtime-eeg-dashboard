@@ -13,7 +13,7 @@
     </nav>
     <div class="row width-100">
       <div class="col-sm-7">
-        <TimeSeries @frequency="setFrequency"/>
+        <TimeSeries @frequency="setFrequency"  @dataForOneSec="getDataForOneSec" />
       </div>
     </div>
   </div>
@@ -56,7 +56,8 @@ export default {
   data() {
     return {
       conStatus: `<span class="text-danger">disconnected</span>`,
-      frequency: 0
+      frequency: 0,
+      dataForOneSec: [],
     };
   },
   sockets: {
@@ -71,6 +72,10 @@ export default {
   methods: {
     setFrequency(value) {
       this.frequency = value;
+    },
+
+    getDataForOneSec(value) {
+      this.dataForOneSec = value;
     }
   }
 };

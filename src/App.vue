@@ -15,6 +15,9 @@
       <div class="col-sm-7">
         <TimeSeries @frequency="setFrequency"  @dataForOneSec="getDataForOneSec" />
       </div>
+      <div class="col-sm-5">
+        <PSD :dataForOneSec=dataForOneSec />
+      </div>
     </div>
   </div>
 </template>
@@ -48,10 +51,12 @@ nav {
 
 <script>
 import TimeSeries from "@/components/TimeSeries.vue";
+import PSD from "@/components/PSD.vue";
 export default {
   name: "App",
   components: {
-    TimeSeries
+    TimeSeries,
+    PSD,
   },
   data() {
     return {

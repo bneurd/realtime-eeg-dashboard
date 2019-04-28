@@ -47,9 +47,15 @@ export default {
         this.dataToEmit[idx].push(data.eeg[idx]);
       });
       this.$emit("frequency", data.fs);
-      if (this.dataToEmit[0].length === data.fs) {
+      if (this.dataToEmit[0].length === data.fs * 3) {
         this.$emit("dataForOneSec", this.dataToEmit);
-        this.dataToEmit = this.dataToEmit.map(_data => [])
+      } else if (this.dataToEmit[0].length == data.fs * 4) {
+        for(let i = 0; i < data.fs; i++) {
+          this.dataToEmit.forEach(channel => {
+            channel.shift();
+          })
+        }        
+        this.$emit("dataForOneSec", this.dataToEmit);
       }
     }
   },

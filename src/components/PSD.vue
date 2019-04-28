@@ -1,35 +1,51 @@
 <template>
   <div>
-    <h1>PSD</h1>
+    <LineChart class="psd-chart" :chart-data="psdData"/>
   </div>
 </template>
 
 <style>
-.channel-name {
-  text-align: right;
-  color: #fff;
-  font-weight: bold;
-  margin: auto;
-}
-
-canvas {
-  border: solid 1px #333;
+.psd-chart {
+	background-color: #555;
 }
 </style>
 
+
 <script>
+import LineChart from "@/components/LineChart.vue";
+import bci from "bcijs";
+import { COLORS } from "@/utils/Colors";
+
 export default {
   name: "PSD",
+  components: {
+    LineChart
+  },
   data() {
-    return {};
+    return {
+      psdData: {}
+    };
   },
   props: {
-    dataForOneSec: Array,
+    dataForOneSec: Array
   },
   watch: {
-      dataForOneSec: (newValue) => {
-          console.log(newValue.length)
-      }
+    dataForOneSec: function(channels) {
+      const datasets = channels.map((channel, idx) => {
+        const psd = bci.psd(channel, {fftSize: 128});
+        return {
+          data: psd,
+					fill: false,
+					borderColor: COLORS[idx],
+					borderWidth: 1,
+					pointRadius: 0,
+        };
+      });
+      this.psdData = {
+        datasets,
+        labels: datasets[0].data.map((_v, id) => id)
+      };
+    }
   },
   methods: {}
 };

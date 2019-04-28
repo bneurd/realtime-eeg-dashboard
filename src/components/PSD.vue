@@ -1,49 +1,87 @@
 <template>
   <div>
-    <LineChart class="psd-chart" :chart-data="psdData"/>
+    <div class="margin-bottom">
+      <LineChart class="psd-chart" :chart-data="psdData"/>
+    </div>
+    <BarChart class="psd-chart" :chart-data="bandPowerData"/>
   </div>
 </template>
 
 <style>
 .psd-chart {
-	background-color: #555;
+  background-color: #555;
+}
+
+.margin-bottom {
+  margin-bottom: 15px;
 }
 </style>
 
 
 <script>
 import LineChart from "@/components/LineChart.vue";
+import BarChart from "@/components/BarChart.vue";
 import bci from "bcijs";
 import { COLORS } from "@/utils/Colors";
 
 export default {
   name: "PSD",
   components: {
-    LineChart
+    LineChart,
+    BarChart
   },
   data() {
     return {
-      psdData: {}
+      psdData: {},
+      bandPowerData: {}
     };
   },
   props: {
-    dataForOneSec: Array
+    dataForOneSec: Array,
+    frequency: Number
   },
   watch: {
     dataForOneSec: function(channels) {
+      let alpha = [];
+      let beta = [];
+      let delta = [];
+      let theta = [];
+      let gamma = [];
+
       const datasets = channels.map((channel, idx) => {
-        const psd = bci.psd(channel, {fftSize: 128});
+        const psd = bci.psd(channel, { fftSize: 128 });
+        const powers = bci.signalBandPower(channel, this.frequency, [
+          "alpha",
+          "beta",
+          "delta",
+          "theta",
+          "gamma"
+        ]);
+        alpha.push(powers[0]);
+        beta.push(powers[1]);
+        delta.push(powers[2]);
+        theta.push(powers[3]);
+        gamma.push(powers[4]);
         return {
           data: psd,
-					fill: false,
-					borderColor: COLORS[idx],
-					borderWidth: 1,
-					pointRadius: 0,
+          fill: false,
+          borderColor: COLORS[idx],
+          borderWidth: 1,
+          pointRadius: 0
         };
       });
+
       this.psdData = {
         datasets,
         labels: datasets[0].data.map((_v, id) => id)
+      };
+
+      this.bandPowerData = {
+        labels: ["alpha", "beta", "delta", "theta", "gamma"],
+        datasets: channels.map((channel, idx) => ({
+          backgroundColor: COLORS[idx],
+          data: [alpha[idx], beta[idx], delta[idx], theta[idx], gamma[idx]]
+        }))
       };
     }
   },

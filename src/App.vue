@@ -16,7 +16,7 @@
         <TimeSeries @frequency="setFrequency"  @dataForOneSec="getDataForOneSec" />
       </div>
       <div class="col-sm-5">
-        <PSD :dataForOneSec=dataForOneSec />
+        <PSD :dataForOneSec=dataForOneSec :frequency=frequency />
       </div>
     </div>
   </div>

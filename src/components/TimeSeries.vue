@@ -1,13 +1,33 @@
 <template>
-  <div id="channels"></div>
+  <div class="row">
+    <div class="col-1">
+      <div v-for="channel in channels" class="align-div" :key="channel">
+        <span class="align-to-graph">{{channel}}</span>
+      </div>
+    </div>
+    <div class="col-11">
+      <canvas
+        id="time-series"
+        style="width:100%;"
+        v-bind:style="{ height: 100 * channels.length + 'px' }"
+      ></canvas>
+    </div>
+  </div>
 </template>
 
 <style>
-.channel-name {
-  text-align: right;
+.align-div {
+  text-align: center;
   color: #fff;
   font-weight: bold;
-  margin: auto;
+  height: 100px;
+  position: relative;
+}
+
+.align-to-graph {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 canvas {
@@ -19,6 +39,8 @@ canvas {
 import { SmoothieChart, TimeSeries } from "smoothie";
 import { getChartSmoothieDefaults } from "@/utils/ChartOptions.js";
 import { COLORS } from "@/utils/Colors";
+import Config from "@/utils/Config";
+import { offsetSignal } from "@/utils/Signal";
 var $ = require("jquery");
 
 export default {
@@ -30,10 +52,19 @@ export default {
       dataToEmitTemplate: [],
       dataToEmit: [],
       firtsPkg: true,
-      channels: []
+      channels: [],
+      data: []
     };
   },
+  props: {
+    unit: String,
+    scale: Number,
+  },
   sockets: {
+    disconnect() {
+      this.firtsPkg = false;
+    },
+
     eeg(dataStr) {
       let data = JSON.parse(dataStr);
       if (this.firtsPkg) {
@@ -42,59 +73,59 @@ export default {
         this.firtsPkg = false;
         this.initGraph();
       }
-      this.series.forEach((serie, idx) => {
-        serie.append(Date.now(), data.eeg[idx]);
-        this.dataToEmit[idx].push(data.eeg[idx]);
-      });
+      this.updateChart(data);
+
+      const updateRate = Math.round(data.fs / 8);
       this.$emit("frequency", data.fs);
       if (this.dataToEmit[0].length === data.fs * 3) {
         this.$emit("dataForOneSec", this.dataToEmit);
-      } else if (this.dataToEmit[0].length == data.fs * 4) {
-        for(let i = 0; i < data.fs; i++) {
+      } else if (this.dataToEmit[0].length == data.fs * 3 + updateRate) {
+        for (let i = 0; i < updateRate; i++) {
           this.dataToEmit.forEach(channel => {
             channel.shift();
-          })
-        }        
+          });
+        }
         this.$emit("dataForOneSec", this.dataToEmit);
       }
     }
   },
   methods: {
     initGraph() {
-      // console.log(this.channels)
+      // console.log(this.channels)=
+
+      // get chart element
+      const canvas = document.getElementById("time-series");
+
+      // Create chart
+      this.charts = new SmoothieChart(
+        getChartSmoothieDefaults(this.channels.length)
+      );
+
       this.channels.forEach((channel, idx) => {
-        // Add chart element
-        $("#channels").append(`
-        <div class="row" style="width:100%;">
-          <div class="col-1 channel-name">
-            ${channel}
-          </div>
-          <div class="col-11">
-            <canvas id="${channel}" style="width:100%; height:90px"></canvas>
-          </div>
-        </div>`);
-
-        // get chart element
-        const canvas = document.getElementById(channel);
-
-        // Create chart
-        this.charts.push(new SmoothieChart(getChartSmoothieDefaults()));
-
         // create time serie
         this.series.push(new TimeSeries());
 
         // add time serie
-        this.charts[idx].addTimeSeries(this.series[idx], {
+        this.charts.addTimeSeries(this.series[idx], {
           strokeStyle: COLORS[idx]
         });
 
         // createDataToEmitTemplate
-        this.dataToEmitTemplate.push([])
-
-        // render chart
-        this.charts[idx].streamTo(canvas);
+        this.dataToEmitTemplate.push([]);
       });
-      this.dataToEmit = [...this.dataToEmitTemplate]
+      // render chart
+      this.charts.streamTo(canvas, 50);
+      this.dataToEmit = [...this.dataToEmitTemplate];
+    },
+
+    updateChart(data) {
+      this.series.forEach((serie, idx) => {
+        serie.append(
+          data.timestamp,
+          offsetSignal(data.eeg[idx], idx, this.channels.length, this.unit, this.scale)
+        );
+        this.dataToEmit[idx].push(data.eeg[idx]);
+      });
     }
   }
 };

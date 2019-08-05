@@ -14,7 +14,8 @@ export default {
             {
               ticks: {
                 beginAtZero: true,
-                fontColor: "white"
+                fontColor: "white",
+                // max: 1000
               },
               gridLines: {
                 display: true
@@ -38,6 +39,8 @@ export default {
         legend: {
           display: false
         },
+        tooltips: { enabled: false },
+        hover: { mode: null },
         responsive: true,
         maintainAspectRatio: false
       }

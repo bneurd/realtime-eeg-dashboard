@@ -5,48 +5,15 @@ const { reactiveProp } = mixins;
 export default {
   extends: Line,
   name: "LineChart",
+  props: ["options", "chartData"],
   mixins: [reactiveProp],
-  data() {
-    return {
-      options: {
-        //Chart.js options
-        scales: {
-          yAxes: [
-            {
-              ticks: {
-                beginAtZero: true,
-                fontColor: "white"
-              },
-              gridLines: {
-                display: true
-              }
-            }
-          ],
-          xAxes: [
-            {
-              gridLines: {
-                display: false
-              },
-              ticks: {
-                fontColor: "white"
-              }
-            }
-          ]
-        },
-        legend: {
-          display: false
-        },
-        animation: {
-          duration: 400
-        },
-        responsive: true,
-        maintainAspectRatio: false
-      }
-    };
-  },
   mounted() {
-    // this.chartData is created in the mixin
     this.renderChart(this.chartData, this.options);
-  }
+  },
+     watch: {
+     options () {
+        this.renderChart(this.chartData, this.options);
+     }
+   }
 };
 </script>

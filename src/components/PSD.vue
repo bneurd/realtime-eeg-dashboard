@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="margin-bottom">
-      <LineChart class="psd-chart" :chart-data="psdData"/>
+      <LineChart class="psd-chart" :chart-data="psdData" :options="chartOptions"/>
     </div>
     <BarChart class="psd-chart" :chart-data="bandPowerData"/>
   </div>
@@ -23,6 +23,7 @@ import LineChart from "@/components/LineChart.vue";
 import BarChart from "@/components/BarChart.vue";
 import bci from "bcijs";
 import { COLORS } from "@/utils/Colors";
+import { getLineChartJsDefaults } from "@/utils/ChartOptions.js";
 
 export default {
   name: "PSD",
@@ -33,12 +34,14 @@ export default {
   data() {
     return {
       psdData: {},
-      bandPowerData: {}
+      bandPowerData: {},
+      chartOptions: getLineChartJsDefaults(),
     };
   },
   props: {
     dataForOneSec: Array,
-    frequency: Number
+    frequency: Number,
+    psd_range: Array
   },
   watch: {
     dataForOneSec: function(channels) {
@@ -49,7 +52,10 @@ export default {
       let gamma = [];
 
       const datasets = channels.map((channel, idx) => {
-        const psd = bci.psd(channel, { fftSize: 128 });
+        const psd = bci.psd(channel, {
+          fftSize: 128,
+          truncate: true
+        });
         const powers = bci.signalBandPower(channel, this.frequency, [
           "alpha",
           "beta",
@@ -83,6 +89,9 @@ export default {
           data: [alpha[idx], beta[idx], delta[idx], theta[idx], gamma[idx]]
         }))
       };
+    },
+    psd_range: function(value) {
+      this.chartOptions = getLineChartJsDefaults(value[0], value[1])
     }
   },
   methods: {}

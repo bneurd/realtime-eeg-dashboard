@@ -41,7 +41,6 @@ import { getChartSmoothieDefaults } from "@/utils/ChartOptions.js";
 import { COLORS } from "@/utils/Colors";
 import Config from "@/utils/Config";
 import { offsetSignal } from "@/utils/Signal";
-var $ = require("jquery");
 
 export default {
   name: "TimeSeries",

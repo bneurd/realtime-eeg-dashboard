@@ -2,7 +2,7 @@
 
 This project creates an electron interface to visualize EEG data come from the [BCPY Module](https://github.com/igornfaustino/bcpy).
 
-![dashboard](./realtime-eeg-dashboard/dashboard.png)
+![dashboard](https://raw.githubusercontent.com/igornfaustino/realtime-eeg-dashboard/master/dashboard.png)
 
 
 

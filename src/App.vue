@@ -12,7 +12,7 @@
       </span>
     </nav>
     <div class="container-fluid" style="margin-top: 20px; margin-botton: 20px; width: 100%;">
-      <ConfigInterface @unit="setUnit" @scale="setScale" @psd_range="setPsd_range"/>
+      <ConfigInterface @unit="setUnit" @scale="setScale" @psd_range="setPsd_range" @fps="setFps" />
     </div>
     <div class="row width-100">
       <div class="col-sm-7">
@@ -21,10 +21,11 @@
           @dataForOneSec="getDataForOneSec"
           :unit="unit"
           :scale="scale"
+          :fps="fps"
         />
       </div>
       <div class="col-sm-5">
-        <PSD :dataForOneSec="dataForOneSec" :frequency="frequency" :psd_range="psd_range"/>
+        <PSD :dataForOneSec="dataForOneSec" :frequency="frequency" :psd_range="psd_range" />
       </div>
     </div>
   </div>
@@ -75,6 +76,7 @@ export default {
       dataForOneSec: [],
       unit: "uV",
       scale: 4.8,
+      fps: "60",
       psd_range: [0, 64]
     };
   },
@@ -106,6 +108,10 @@ export default {
 
     setPsd_range(value) {
       this.psd_range = value;
+    },
+
+    setFps(value) {
+      this.fps = value;
     }
   }
 };

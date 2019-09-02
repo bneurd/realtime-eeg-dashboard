@@ -58,6 +58,12 @@ export default {
   props: {
     unit: String,
     scale: Number,
+    fps: String,
+  },
+  watch: {
+    fps: function (fps) {
+      this.charts.options.limitFPS = fps;
+    }
   },
   sockets: {
     disconnect() {
@@ -67,7 +73,6 @@ export default {
     eeg(dataStr) {
       let data = JSON.parse(dataStr);
       if (this.firtsPkg) {
-        console.log(data);
         this.channels = data.channels;
         this.firtsPkg = false;
         this.initGraph();
@@ -90,8 +95,6 @@ export default {
   },
   methods: {
     initGraph() {
-      // console.log(this.channels)=
-
       // get chart element
       const canvas = document.getElementById("time-series");
 
@@ -115,6 +118,7 @@ export default {
       // render chart
       this.charts.streamTo(canvas, 50);
       this.dataToEmit = [...this.dataToEmitTemplate];
+      console.log(this.charts.options.limitFPS)
     },
 
     updateChart(data) {

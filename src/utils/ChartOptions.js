@@ -19,7 +19,6 @@ export function getChartSmoothieDefaults(numOfChannels) {
 
 export function getLineChartJsDefaults(minX = 0, maxX = 64) {
     return {
-        //Chart.js options
         scales: {
             yAxes: [
                 {

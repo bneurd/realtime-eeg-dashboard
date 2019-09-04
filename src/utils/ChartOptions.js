@@ -1,6 +1,6 @@
 export function getChartSmoothieDefaults(numOfChannels) {
     return Object.assign({
-        millisPerPixel: 5,
+        millisPerPixel: 6,
         responsive: true,
         grid: {
             fillStyle: '#555',

@@ -39,8 +39,8 @@
     "vue-template-compiler": "^2.6.10"
   },
   "build": {
-     "directories": {
-       "output": "dist_electron"
-     }
+    "directories": {
+      "output": "dist_electron"
+    }
   }
 }

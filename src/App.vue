@@ -12,7 +12,13 @@
       </span>
     </nav>
     <div class="container-fluid" style="margin-top: 20px; margin-botton: 20px; width: 100%;">
-      <ConfigInterface @unit="setUnit" @scale="setScale" @psd_range="setPsd_range" @fps="setFps" />
+      <ConfigInterface
+        @unit="setUnit"
+        @scale="setScale"
+        @psd_range="setPsd_range"
+        @fps="setFps"
+        @band_view_mode="setBandViewMode"
+      />
     </div>
     <div class="row width-100">
       <div class="col-sm-7">
@@ -25,7 +31,12 @@
         />
       </div>
       <div class="col-sm-5">
-        <PSD :dataForOneSec="dataForOneSec" :frequency="frequency" :psd_range="psd_range" />
+        <PSD
+          :dataForOneSec="dataForOneSec"
+          :frequency="frequency"
+          :psd_range="psd_range"
+          :band_view_mode="band_view_mode"
+        />
       </div>
     </div>
   </div>
@@ -77,7 +88,8 @@ export default {
       unit: "uV",
       scale: 4.8,
       fps: "60",
-      psd_range: [0, 64]
+      psd_range: [0, 64],
+      band_view_mode: "each"
     };
   },
   sockets: {
@@ -112,6 +124,10 @@ export default {
 
     setFps(value) {
       this.fps = value;
+    },
+
+    setBandViewMode(value) {
+      this.band_view_mode = value;
     }
   }
 };

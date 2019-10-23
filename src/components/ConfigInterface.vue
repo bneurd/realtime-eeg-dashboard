@@ -20,13 +20,22 @@
       </div>
       <div class="col-1">
         <md-field>
-          <label for="units">Limit framerate</label>
+          <label for="fps">Limit framerate</label>
           <md-select v-model="fps">
             <md-option value="60">60</md-option>
             <md-option value="48">48</md-option>
             <md-option value="30">30</md-option>
             <md-option value="20">20</md-option>
             <md-option value="15">15</md-option>
+          </md-select>
+        </md-field>
+      </div>
+      <div class="col-1">
+        <md-field>
+          <label for="band_view_mode">Band view mode</label>
+          <md-select v-model="band_view_mode">
+            <md-option value="each">each</md-option>
+            <md-option value="average">average</md-option>
           </md-select>
         </md-field>
       </div>
@@ -54,20 +63,24 @@ export default {
       scale_max: 6,
       interval: 0.1,
       fps: "60",
+      band_view_mode: "each"
     };
   },
   watch: {
-    unit: function (unit) {
+    unit: function(unit) {
       this.$emit("unit", unit);
     },
-    scale: function (scale) {
+    scale: function(scale) {
       this.$emit("scale", scale);
     },
-    psd_range: function (psd_range) {
-      this.$emit("psd_range", psd_range)
+    psd_range: function(psd_range) {
+      this.$emit("psd_range", psd_range);
     },
-    fps: function (fps) {
-      this.$emit("fps", fps)
+    fps: function(fps) {
+      this.$emit("fps", fps);
+    },
+    band_view_mode: function(mode) {
+      this.$emit("band_view_mode", mode);
     }
   }
 };

@@ -1,9 +1,9 @@
 <template>
   <div>
     <div class="margin-bottom">
-      <LineChart class="psd-chart" :chart-data="psdData" :options="chartOptions"/>
+      <LineChart class="psd-chart" :chart-data="psdData" :options="chartOptions" />
     </div>
-    <BarChart class="psd-chart" :chart-data="bandPowerData"/>
+    <BarChart class="psd-chart" :chart-data="bandPowerData" />
   </div>
 </template>
 
@@ -22,7 +22,8 @@
 import LineChart from "@/components/LineChart.vue";
 import BarChart from "@/components/BarChart.vue";
 import bci from "bcijs";
-import { COLORS } from "@/utils/Colors";
+import { getColor } from "../utils/Colors";
+import { getChartsData } from "../utils/Data";
 import { getLineChartJsDefaults } from "@/utils/ChartOptions.js";
 
 export default {
@@ -35,65 +36,72 @@ export default {
     return {
       psdData: {},
       bandPowerData: {},
-      chartOptions: getLineChartJsDefaults(),
+      chartOptions: getLineChartJsDefaults()
     };
   },
   props: {
     dataForOneSec: Array,
     frequency: Number,
-    psd_range: Array
+    psd_range: Array,
+    band_view_mode: String
   },
   watch: {
     dataForOneSec: function(channels) {
-      let alpha = [];
-      let beta = [];
-      let delta = [];
-      let theta = [];
-      let gamma = [];
+      const [datasets, powers] = getChartsData(channels, this.frequency);
 
-      const datasets = channels.map((channel, idx) => {
-        const psd = bci.psd(channel, {
-          fftSize: 128,
-          truncate: true
-        });
-        const powers = bci.signalBandPower(channel, this.frequency, [
-          "alpha",
-          "beta",
-          "delta",
-          "theta",
-          "gamma"
-        ]);
-        alpha.push(powers[0]);
-        beta.push(powers[1]);
-        delta.push(powers[2]);
-        theta.push(powers[3]);
-        gamma.push(powers[4]);
-        return {
-          data: psd,
-          fill: false,
-          borderColor: COLORS[idx],
-          borderWidth: 1,
-          pointRadius: 0
-        };
-      });
-
+      this.setPSDGraphData(datasets);
+      this.setPowerGraphData(powers);
+    },
+    psd_range: function(value) {
+      this.chartOptions = getLineChartJsDefaults(value[0], value[1]);
+    }
+  },
+  methods: {
+    setPSDGraphData(datasets) {
       this.psdData = {
         datasets,
-        labels: datasets[0].data.map((_v, id) => id)
+        labels: datasets[0].data.map((_, frequency) => frequency)
       };
+    },
+    setPowerGraphData(powers) {
+      if (this.band_view_mode === "each") {
+        return this.setPowerGraphForEachChannel(powers);
+      }
+      this.setPowerGraphAverage(powers)
+    },
 
+    setPowerGraphForEachChannel(powers) {
       this.bandPowerData = {
         labels: ["alpha", "beta", "delta", "theta", "gamma"],
-        datasets: channels.map((channel, idx) => ({
-          backgroundColor: COLORS[idx],
-          data: [alpha[idx], beta[idx], delta[idx], theta[idx], gamma[idx]]
+        datasets: powers.alpha.map((_, idx) => ({
+          backgroundColor: getColor(idx),
+          data: [
+            powers.alpha[idx],
+            powers.beta[idx],
+            powers.delta[idx],
+            powers.theta[idx],
+            powers.gamma[idx]
+          ]
         }))
       };
     },
-    psd_range: function(value) {
-      this.chartOptions = getLineChartJsDefaults(value[0], value[1])
+
+    setPowerGraphAverage(powers) {
+      const numOfChannels = powers.alpha.length
+      this.bandPowerData = {
+        labels: ["alpha", "beta", "delta", "theta", "gamma"],
+        datasets: [{
+          backgroundColor: getColor(0),
+          data: [
+            powers.alpha.reduce((a, b) => a+b, 0) / numOfChannels,
+            powers.beta.reduce((a, b) => a+b, 0) / numOfChannels,
+            powers.delta.reduce((a, b) => a+b, 0) / numOfChannels,
+            powers.theta.reduce((a, b) => a+b, 0) / numOfChannels,
+            powers.gamma.reduce((a, b) => a+b, 0) / numOfChannels
+          ]
+        }]
+      };
     }
-  },
-  methods: {}
+  }
 };
 </script>

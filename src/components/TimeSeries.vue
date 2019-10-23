@@ -38,7 +38,7 @@ canvas {
 <script>
 import { SmoothieChart, TimeSeries } from "smoothie";
 import { getChartSmoothieDefaults } from "@/utils/ChartOptions.js";
-import { COLORS } from "@/utils/Colors";
+import { getColor } from "../utils/Colors";
 import Config from "@/utils/Config";
 import { offsetSignal } from "@/utils/Signal";
 
@@ -109,7 +109,7 @@ export default {
 
         // add time serie
         this.charts.addTimeSeries(this.series[idx], {
-          strokeStyle: COLORS[idx]
+          strokeStyle: getColor(idx)
         });
 
         // createDataToEmitTemplate

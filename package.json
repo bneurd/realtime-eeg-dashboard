@@ -7,7 +7,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "electron:serve": "NODE_ENV=DEV vue-cli-service serve & sleep 5 && NODE_ENV=DEV electron electron.js",
+    "electron:serve": "NODE_ENV=DEV vue-cli-service serve --port 8080 & sleep 5 && NODE_ENV=DEV electron electron.js",
     "electron:build": "vue-cli-service build && electron-builder build"
   },
   "main": "electron.js",

@@ -18,6 +18,7 @@
         @psd_range="setPsd_range"
         @fps="setFps"
         @band_view_mode="setBandViewMode"
+        @pause="setIsStop"
       />
     </div>
     <div class="row width-100">
@@ -28,6 +29,7 @@
           :unit="unit"
           :scale="scale"
           :fps="fps"
+          :isStop="isStop"
         />
       </div>
       <div class="col-sm-5">
@@ -36,6 +38,7 @@
           :frequency="frequency"
           :psd_range="psd_range"
           :band_view_mode="band_view_mode"
+          :isStop="isStop"
         />
       </div>
     </div>
@@ -89,7 +92,8 @@ export default {
       scale: 4.8,
       fps: "60",
       psd_range: [0, 64],
-      band_view_mode: "each"
+      band_view_mode: "each",
+      isStop: false,
     };
   },
   sockets: {
@@ -125,7 +129,9 @@ export default {
     setFps(value) {
       this.fps = value;
     },
-
+    setIsStop(value) {
+      this.isStop = value
+    },
     setBandViewMode(value) {
       this.band_view_mode = value;
     }

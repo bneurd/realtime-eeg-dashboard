@@ -59,10 +59,18 @@ export default {
     unit: String,
     scale: Number,
     fps: String,
+    isStop: Boolean,
   },
   watch: {
     fps: function (fps) {
       this.charts.options.limitFPS = fps;
+    },
+    isStop: function (isStop) {
+      if (isStop) {
+        this.charts.stop()
+      } else {
+        this.charts.start()
+      }
     }
   },
   sockets: {
@@ -118,7 +126,9 @@ export default {
       // render chart
       this.charts.streamTo(canvas, 50);
       this.dataToEmit = [...this.dataToEmitTemplate];
+      this.charts.options.limitFPS = 60;
       console.log(this.charts.options.limitFPS)
+      console.log(this.charts)
     },
 
     updateChart(data) {

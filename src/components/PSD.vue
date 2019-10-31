@@ -34,6 +34,7 @@ export default {
   },
   data() {
     return {
+      powers: {},
       psdData: {},
       bandPowerData: {},
       chartOptions: getLineChartJsDefaults()
@@ -43,10 +44,12 @@ export default {
     dataForOneSec: Array,
     frequency: Number,
     psd_range: Array,
-    band_view_mode: String
+    band_view_mode: String,
+    isStop: Boolean,
   },
   watch: {
     dataForOneSec: function(channels) {
+      if (this.isStop) return;
       const [datasets, powers] = getChartsData(channels, this.frequency);
 
       this.setPSDGraphData(datasets);
@@ -54,6 +57,12 @@ export default {
     },
     psd_range: function(value) {
       this.chartOptions = getLineChartJsDefaults(value[0], value[1]);
+    },
+    band_view_mode: function(value) {
+      if (value === "each") {
+        return this.setPowerGraphForEachChannel(this.powers);
+      }
+      this.setPowerGraphAverage(this.powers)
     }
   },
   methods: {
@@ -64,6 +73,7 @@ export default {
       };
     },
     setPowerGraphData(powers) {
+      this.powers = powers;
       if (this.band_view_mode === "each") {
         return this.setPowerGraphForEachChannel(powers);
       }
@@ -72,14 +82,14 @@ export default {
 
     setPowerGraphForEachChannel(powers) {
       this.bandPowerData = {
-        labels: ["alpha", "beta", "delta", "theta", "gamma"],
+        labels: ["delta", "theta", "alpha", "beta", "gamma"],
         datasets: powers.alpha.map((_, idx) => ({
           backgroundColor: getColor(idx),
           data: [
-            powers.alpha[idx],
-            powers.beta[idx],
             powers.delta[idx],
             powers.theta[idx],
+            powers.alpha[idx],
+            powers.beta[idx],
             powers.gamma[idx]
           ]
         }))
@@ -89,14 +99,14 @@ export default {
     setPowerGraphAverage(powers) {
       const numOfChannels = powers.alpha.length
       this.bandPowerData = {
-        labels: ["alpha", "beta", "delta", "theta", "gamma"],
+        labels: ["delta", "theta", "alpha", "beta", "gamma"],
         datasets: [{
           backgroundColor: getColor(0),
           data: [
-            powers.alpha.reduce((a, b) => a+b, 0) / numOfChannels,
-            powers.beta.reduce((a, b) => a+b, 0) / numOfChannels,
             powers.delta.reduce((a, b) => a+b, 0) / numOfChannels,
             powers.theta.reduce((a, b) => a+b, 0) / numOfChannels,
+            powers.alpha.reduce((a, b) => a+b, 0) / numOfChannels,
+            powers.beta.reduce((a, b) => a+b, 0) / numOfChannels,
             powers.gamma.reduce((a, b) => a+b, 0) / numOfChannels
           ]
         }]

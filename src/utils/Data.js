@@ -1,5 +1,6 @@
 import { getColor } from "./Colors";
 import bci from "bcijs";
+import { fft } from "./fft";
 
 export const getChartsData = (channels, frequency) => {
   let alpha = [];
@@ -13,13 +14,15 @@ export const getChartsData = (channels, frequency) => {
       fftSize: 128,
       truncate: true
     });
-    const powers = bci.signalBandPower(channel, frequency, [
+    
+    let powers = bci.signalBandPower(channel, frequency, [
       "alpha",
       "beta",
       "delta",
       "theta",
       "gamma"
     ]);
+    // powers = powers.map(x => 10 * Math.log2(x))
     alpha.push(powers[0]);
     beta.push(powers[1]);
     delta.push(powers[2]);

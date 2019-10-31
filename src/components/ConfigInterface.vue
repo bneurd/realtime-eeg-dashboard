@@ -39,6 +39,9 @@
           </md-select>
         </md-field>
       </div>
+      <div class="col-1">
+        <button v-on:click="pause">pause</button>
+      </div>
     </div>
   </div>
 </template>
@@ -63,7 +66,8 @@ export default {
       scale_max: 6,
       interval: 0.1,
       fps: "60",
-      band_view_mode: "each"
+      band_view_mode: "each",
+      isStop: false,
     };
   },
   watch: {
@@ -81,6 +85,12 @@ export default {
     },
     band_view_mode: function(mode) {
       this.$emit("band_view_mode", mode);
+    }
+  },
+  methods: {
+    pause() {
+      this.isStop = !this.isStop
+      this.$emit("pause", this.isStop)
     }
   }
 };

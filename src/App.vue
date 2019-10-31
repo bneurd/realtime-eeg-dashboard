@@ -1,16 +1,6 @@
 <template>
   <div>
-    <nav class="navbar navbar-dark bg-dark">
-      <span class="navbar-brand mb-0 h1">BCPY</span>
-      <span class="navbar-text element-center">
-        status:
-        <span id="con-status" class="font-weight-bold" v-html="conStatus"></span>
-      </span>
-      <span class="navbar-text element-right">
-        frequency:
-        <span id="frequency" class="font-weight-bold">{{frequency}}</span>
-      </span>
-    </nav>
+    <Header :frequency="frequency" :conStatus="conStatus" />
     <div class="container-fluid" style="margin-top: 20px; margin-botton: 20px; width: 100%;">
       <ConfigInterface
         @unit="setUnit"
@@ -46,29 +36,9 @@
 </template>
 
 <style>
-.element-center {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.width-100 {
-  width: 100%;
-}
-
 body {
   min-height: 100vh;
   background-color: #444 !important;
-}
-
-.element-right {
-  position: absolute;
-  width: 10%;
-  right: 1%;
-}
-
-nav {
-  margin-bottom: 20px;
 }
 </style>
 
@@ -76,12 +46,14 @@ nav {
 import TimeSeries from "@/components/TimeSeries.vue";
 import PSD from "@/components/PSD.vue";
 import ConfigInterface from "@/components/ConfigInterface.vue";
+import Header from "./components/Header";
 export default {
   name: "App",
   components: {
     TimeSeries,
     PSD,
-    ConfigInterface
+    ConfigInterface,
+    Header
   },
   data() {
     return {
@@ -93,16 +65,16 @@ export default {
       fps: "60",
       psd_range: [0, 64],
       band_view_mode: "each",
-      isStop: false,
+      isStop: false
     };
   },
   sockets: {
     connect() {
-      this.conStatus = `<span class="text-success">connected</span>`;
+      this.conStatus = `connected`;
     },
 
     disconnect() {
-      this.conStatus = `<span class="text-danger">disconnected</span>`;
+      this.conStatus = `disconnected`;
     }
   },
   methods: {
@@ -130,7 +102,7 @@ export default {
       this.fps = value;
     },
     setIsStop(value) {
-      this.isStop = value
+      this.isStop = value;
     },
     setBandViewMode(value) {
       this.band_view_mode = value;

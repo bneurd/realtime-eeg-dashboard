@@ -1,7 +1,7 @@
 <template>
   <div>
     <Header :frequency="frequency" :conStatus="conStatus" />
-    <div class="container-fluid" style="margin-top: 20px; margin-botton: 20px; width: 100%;">
+    <div class="container-fluid" style="margin-top: 20px; padding-top: 40px; margin-botton: 20px; width: 100%;">
       <ConfigInterface
         @unit="setUnit"
         @scale="setScale"
@@ -39,6 +39,10 @@
 body {
   min-height: 100vh;
   background-color: #444 !important;
+}
+
+.margin-top {
+  margin-top: 300px;
 }
 </style>
 

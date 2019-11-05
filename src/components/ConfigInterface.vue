@@ -39,9 +39,6 @@
           </md-select>
         </md-field>
       </div>
-      <div class="col-1">
-        <button v-on:click="pause">pause</button>
-      </div>
     </div>
   </div>
 </template>
@@ -87,12 +84,6 @@ export default {
       this.$emit("band_view_mode", mode);
     }
   },
-  methods: {
-    pause() {
-      this.isStop = !this.isStop
-      this.$emit("pause", this.isStop)
-    }
-  }
 };
 </script>
 

@@ -1,17 +1,19 @@
 <template>
   <div>
-    <Header :frequency="frequency" :conStatus="conStatus" />
-    <div class="container-fluid" style="margin-top: 20px; padding-top: 40px; margin-botton: 20px; width: 100%;">
+    <Header :frequency="frequency" :conStatus="conStatus" @pause="setIsStop" />
+    <div
+      class="container-fluid"
+      style="margin-top: 20px; padding-top: 40px; margin-botton: 20px; width: 100%;"
+    >
       <ConfigInterface
         @unit="setUnit"
         @scale="setScale"
         @psd_range="setPsd_range"
         @fps="setFps"
         @band_view_mode="setBandViewMode"
-        @pause="setIsStop"
       />
     </div>
-    <div class="row width-100">
+    <div class="container-fluid row width-100">
       <div class="col-sm-7">
         <TimeSeries
           @frequency="setFrequency"

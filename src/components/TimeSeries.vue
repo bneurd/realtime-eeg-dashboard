@@ -38,7 +38,7 @@ canvas {
 <script>
 import { SmoothieChart, TimeSeries } from "smoothie";
 import { getChartSmoothieDefaults } from "@/utils/ChartOptions.js";
-import { COLORS } from "@/utils/Colors";
+import { getColor } from "../utils/Colors";
 import Config from "@/utils/Config";
 import { offsetSignal } from "@/utils/Signal";
 
@@ -58,6 +58,20 @@ export default {
   props: {
     unit: String,
     scale: Number,
+    fps: String,
+    isStop: Boolean,
+  },
+  watch: {
+    fps: function (fps) {
+      this.charts.options.limitFPS = fps;
+    },
+    isStop: function (isStop) {
+      if (isStop) {
+        this.charts.stop()
+      } else {
+        this.charts.start()
+      }
+    }
   },
   sockets: {
     disconnect() {
@@ -67,7 +81,6 @@ export default {
     eeg(dataStr) {
       let data = JSON.parse(dataStr);
       if (this.firtsPkg) {
-        console.log(data);
         this.channels = data.channels;
         this.firtsPkg = false;
         this.initGraph();
@@ -90,8 +103,6 @@ export default {
   },
   methods: {
     initGraph() {
-      // console.log(this.channels)=
-
       // get chart element
       const canvas = document.getElementById("time-series");
 
@@ -106,7 +117,7 @@ export default {
 
         // add time serie
         this.charts.addTimeSeries(this.series[idx], {
-          strokeStyle: COLORS[idx]
+          strokeStyle: getColor(idx)
         });
 
         // createDataToEmitTemplate
@@ -115,6 +126,9 @@ export default {
       // render chart
       this.charts.streamTo(canvas, 50);
       this.dataToEmit = [...this.dataToEmitTemplate];
+      this.charts.options.limitFPS = 60;
+      console.log(this.charts.options.limitFPS)
+      console.log(this.charts)
     },
 
     updateChart(data) {

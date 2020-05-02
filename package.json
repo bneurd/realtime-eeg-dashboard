@@ -7,7 +7,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "electron:serve": "NODE_ENV=DEV vue-cli-service serve & sleep 5 && NODE_ENV=DEV electron electron.js",
+    "electron:serve": "NODE_ENV=DEV vue-cli-service serve --port 8080 & sleep 5 && NODE_ENV=DEV electron electron.js",
     "electron:build": "vue-cli-service build && electron-builder build"
   },
   "main": "electron.js",
@@ -16,6 +16,7 @@
     "bootstrap": "^4.3.1",
     "chart.js": "^2.8.0",
     "core-js": "^2.6.5",
+    "fft.js": "^4.0.3",
     "materialize-css": "^1.0.0-rc.2",
     "readline": "^1.3.0",
     "smoothie": "^1.35.0",

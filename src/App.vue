@@ -1,59 +1,50 @@
 <template>
   <div>
-    <nav class="navbar navbar-dark bg-dark">
-      <span class="navbar-brand mb-0 h1">BCPY</span>
-      <span class="navbar-text element-center">
-        status:
-        <span id="con-status" class="font-weight-bold" v-html="conStatus"></span>
-      </span>
-      <span class="navbar-text element-right">
-        frequency:
-        <span id="frequency" class="font-weight-bold">{{frequency}}</span>
-      </span>
-    </nav>
-    <div class="container-fluid" style="margin-top: 20px; margin-botton: 20px; width: 100%;">
-      <ConfigInterface @unit="setUnit" @scale="setScale" @psd_range="setPsd_range"/>
+    <Header :frequency="frequency" :conStatus="conStatus" @pause="setIsStop" />
+    <div
+      class="container-fluid"
+      style="margin-top: 20px; padding-top: 40px; margin-botton: 20px; width: 100%;"
+    >
+      <ConfigInterface
+        @unit="setUnit"
+        @scale="setScale"
+        @psd_range="setPsd_range"
+        @fps="setFps"
+        @band_view_mode="setBandViewMode"
+      />
     </div>
-    <div class="row width-100">
+    <div class="container-fluid row width-100">
       <div class="col-sm-7">
         <TimeSeries
           @frequency="setFrequency"
           @dataForOneSec="getDataForOneSec"
           :unit="unit"
           :scale="scale"
+          :fps="fps"
+          :isStop="isStop"
         />
       </div>
       <div class="col-sm-5">
-        <PSD :dataForOneSec="dataForOneSec" :frequency="frequency" :psd_range="psd_range"/>
+        <PSD
+          :dataForOneSec="dataForOneSec"
+          :frequency="frequency"
+          :psd_range="psd_range"
+          :band_view_mode="band_view_mode"
+          :isStop="isStop"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <style>
-.element-center {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.width-100 {
-  width: 100%;
-}
-
 body {
   min-height: 100vh;
   background-color: #444 !important;
 }
 
-.element-right {
-  position: absolute;
-  width: 10%;
-  right: 1%;
-}
-
-nav {
-  margin-bottom: 20px;
+.margin-top {
+  margin-top: 300px;
 }
 </style>
 
@@ -61,12 +52,14 @@ nav {
 import TimeSeries from "@/components/TimeSeries.vue";
 import PSD from "@/components/PSD.vue";
 import ConfigInterface from "@/components/ConfigInterface.vue";
+import Header from "./components/Header";
 export default {
   name: "App",
   components: {
     TimeSeries,
     PSD,
-    ConfigInterface
+    ConfigInterface,
+    Header
   },
   data() {
     return {
@@ -75,16 +68,19 @@ export default {
       dataForOneSec: [],
       unit: "uV",
       scale: 4.8,
-      psd_range: [0, 64]
+      fps: "60",
+      psd_range: [0, 64],
+      band_view_mode: "each",
+      isStop: false
     };
   },
   sockets: {
     connect() {
-      this.conStatus = `<span class="text-success">connected</span>`;
+      this.conStatus = `connected`;
     },
 
     disconnect() {
-      this.conStatus = `<span class="text-danger">disconnected</span>`;
+      this.conStatus = `disconnected`;
     }
   },
   methods: {
@@ -106,6 +102,16 @@ export default {
 
     setPsd_range(value) {
       this.psd_range = value;
+    },
+
+    setFps(value) {
+      this.fps = value;
+    },
+    setIsStop(value) {
+      this.isStop = value;
+    },
+    setBandViewMode(value) {
+      this.band_view_mode = value;
     }
   }
 };
